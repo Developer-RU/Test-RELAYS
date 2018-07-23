@@ -9,8 +9,6 @@
 #define DIO 3               //  TM1637 DIO
 
 TM1637 tm1637(CLK, DIO);
-uint8_t CountDisp[] = {0x00,0x00,0x00,0x00};
-
 
 
 // Пины на реле - секциями по 10шт (можно также написать их названия - A0, A1 и т.п.)
@@ -43,6 +41,19 @@ int num_programm = 0, num_relay = 0;
 bool it_work = false, flag_select = false, flag_level = false;
 bool state_relay = false;
 
+void run_tm1637()
+{    
+    tm1637.display(3, num_programm);
+    tm1637.point(POINT_OFF);
+}
+
+void clear_tm1637()
+{
+    tm1637.display(0, 0);
+    tm1637.display(1, 0);
+    tm1637.display(2, 0);
+    tm1637.display(3, 0);
+}
 
 void setup()
 {
@@ -56,6 +67,8 @@ void setup()
     
     tm1637.init();
     tm1637.set(4);
+
+    run_tm1637();
 }
 
 void all_reset()
@@ -78,6 +91,7 @@ void loop()
     {
         flag_level = false;
         if(num_programm < 12) num_programm++; else num_programm = 0;
+        run_tm1637();
         delay(100);
     }
 
