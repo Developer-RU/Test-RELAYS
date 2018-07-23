@@ -1,0 +1,136 @@
+#include "TM1637.h"
+
+
+#define SELECT  4           //  Старт / Стоп
+#define LEVEL   5           //  Номер программы
+
+
+#define CLK 2               //  TM1637 CLK
+#define DIO 3               //  TM1637 DIO
+
+TM1637 tm1637(CLK, DIO);
+uint8_t CountDisp[] = {0x00,0x00,0x00,0x00};
+
+
+
+// Пины на реле - секциями по 10шт (можно также написать их названия - A0, A1 и т.п.)
+int relays[60] = 
+{
+     6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 
+    16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 
+    26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 
+    36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 
+    46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 
+    56, 57, 58, 59, 60, 61, 62, 63, 64, 65
+};
+
+
+// Длительности режимов (если время пришло - все реле выключатся, независимо на каком реле встала работа)
+int modes[12] = 
+{
+    12,   36,  72, 108, 135, 176,
+    200, 236, 272, 310, 356, 400
+};
+
+unsigned long pause_one = 200;  /// Указано в миллисекундах, возможно надо корректировать на 1-2 мс
+unsigned long pause_two = 250;  /// Указано в миллисекундах, возможно надо корректировать на 1-4 мс
+
+
+unsigned long time_start = 0; 
+unsigned long time_period = 0; 
+
+int num_programm = 0, num_relay = 0;
+bool it_work = false, flag_select = false, flag_level = false;
+bool state_relay = false;
+
+
+void setup()
+{
+    pinMode(SELECT, INPUT); digitalWrite(SELECT, HIGH);
+    pinMode(LEVEL,  INPUT); digitalWrite(LEVEL, HIGH);
+
+    for(int i = 0; i < 60; ++i)
+    {
+        pinMode(relays[i], OUTPUT); digitalWrite(relays[i], LOW);
+    }
+    
+    tm1637.init();
+    tm1637.set(4);
+}
+
+void all_reset()
+{
+    for(int i = 0; i < 60; ++i) digitalWrite(relays[i], LOW);
+    it_work = false;
+    state_relay = false;
+    num_relay = 0;
+}
+
+void loop()
+{
+    if(digitalRead(LEVEL) == LOW && !flag_level && !it_work)
+    {
+        flag_level = true;
+        delay(100);
+    }
+
+    if(digitalRead(LEVEL) == HIGH && flag_level)
+    {
+        flag_level = false;
+        if(num_programm < 12) num_programm++; else num_programm = 0;
+        delay(100);
+    }
+
+    if(digitalRead(SELECT) == LOW && !flag_select)
+    {
+        flag_select = true;
+        delay(100);
+    }
+
+    if(digitalRead(SELECT) == HIGH && flag_select)
+    {
+        flag_select = false;
+        if(it_work) all_reset(); else it_work = true;
+        delay(100);
+        time_start = millis();
+    }
+
+    if(it_work)
+    {
+        if(millis() - time_start >= modes[num_programm] * 1000) all_reset();
+        
+        if(num_programm < 7)
+        {
+            if(!state_relay) 
+            {
+                time_period = millis();
+                digitalWrite(relays[num_relay], HIGH);
+                state_relay = true;
+            }
+
+            if(millis() - time_period >= pause_one) 
+            {
+                digitalWrite(relays[num_relay], LOW);
+                num_relay++;
+                state_relay = false;
+            }
+        }
+        else
+        {
+            if(!state_relay) 
+            {
+                time_period = millis();
+                digitalWrite(relays[num_relay], HIGH);
+                state_relay = true;
+            }
+
+            if(millis() - time_period >= pause_two) 
+            {
+                digitalWrite(relays[num_relay], LOW);
+                num_relay++;
+                state_relay = false;
+            }
+        }        
+    }
+}
+
