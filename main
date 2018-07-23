@@ -9,6 +9,7 @@
 #define DIO 3               //  TM1637 DIO
 
 TM1637 tm1637(CLK, DIO);
+int8_t NumTab[12] = {0,1,2,3,4,5,6,7,8,9,10, 11};
 
 
 // Пины на реле - секциями по 10шт (можно также написать их названия - A0, A1 и т.п.)
@@ -42,8 +43,20 @@ bool it_work = false, flag_select = false, flag_level = false;
 bool state_relay = false;
 
 void run_tm1637()
-{    
-    tm1637.display(3, num_programm);
+{   
+    String m = String(int(num_programm));
+    int mlength = m.length();
+
+    if(mlength != 4)
+    {
+        for(int i = mlength; i != 4; i++) m = "0" + m;
+    }
+
+    tm1637.display(0, NumTab[m.substring(0, 1).toInt()]);
+    tm1637.display(1, NumTab[m.substring(1, 2).toInt()]); 
+    tm1637.display(2, NumTab[m.substring(2, 3).toInt()]);
+    tm1637.display(3, NumTab[m.substring(3, 4).toInt()]);
+
     tm1637.point(POINT_OFF);
 }
 
@@ -67,7 +80,7 @@ void setup()
     
     tm1637.init();
     tm1637.set(4);
-
+    clear_tm1637();
     run_tm1637();
 }
 
