@@ -43,7 +43,7 @@ bool state_relay = false;
 
 void run_tm1637()
 {   
-    String m = String(int(num_programm));
+    String m = String(int(num_programm + 1));
     int mlength = m.length();
 
     if(mlength != 4)
