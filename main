@@ -74,7 +74,7 @@ void setup()
 
     for(int i = 0; i < 60; ++i)
     {
-        pinMode(relays[i], OUTPUT); digitalWrite(relays[i], LOW);
+        pinMode(relays[i], OUTPUT); digitalWrite(relays[i], HIGH);
     }
     
     tm1637.set(7);
@@ -89,6 +89,7 @@ void all_reset()
     it_work = false;
     state_relay = false;
     num_relay = 0;
+    cnt = 0;
 }
 
 void loop()
@@ -129,13 +130,13 @@ void loop()
             if(!state_relay) 
             {
                 time_period = millis();
-                digitalWrite(relays[num_relay], HIGH);
+                digitalWrite(relays[num_relay], LOW);
                 state_relay = true;
             }
 
             if(millis() - time_period >= pause_one) 
             {
-                digitalWrite(relays[num_relay], LOW);
+                digitalWrite(relays[num_relay], HIGH);
                 if(num_relay < 60) num_relay++; else num_relay = 60;
                 cnt++;
                 state_relay = false;
@@ -146,13 +147,13 @@ void loop()
             if(!state_relay) 
             {
                 time_period = millis();
-                digitalWrite(relays[num_relay], HIGH);
+                digitalWrite(relays[num_relay], LOW);
                 state_relay = true;
             }
 
             if(millis() - time_period >= pause_two) 
             {
-                digitalWrite(relays[num_relay], LOW);
+                digitalWrite(relays[num_relay], HIGH);
                 if(num_relay < 60) num_relay++; else num_relay = 60;
                 cnt++;
                 state_relay = false;
