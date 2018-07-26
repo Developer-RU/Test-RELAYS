@@ -19,15 +19,15 @@ int relays[60] =
     16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 
     26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 
     36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 
-    46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 
-    56, 57, 58, 59, 60, 61, 62, 63, 64, 65
+    46, 47, 48, 49, 50, 51, 52, 53, 54, A0, 
+    A1, A2, A3, A4, A5, A6, A7, A8, A9, A10
 };
 
 
 // Длительности режимов (если время пришло - все реле выключатся, независимо на каком реле встала работа)
 int modes[12] = 
 {
-    1, 2  3,  4,  5,  6,
+    1, 2, 3,  4,  5,  6,
     7, 8, 9, 10, 11, 12
 };
 
@@ -35,15 +35,17 @@ unsigned long pause_one = 200;  /// Указано в миллисекундах
 unsigned long pause_two = 250;  /// Указано в миллисекундах, возможно надо корректировать на 1-4 мс
 
 
-int cnt = 0; 
+unsigned long cnt = 0; 
 unsigned long time_period = 0; 
-int num_programm = 0, num_relay = 0;
+unsigned long num_programm = 0, num_relay = 0;
 bool it_work = false, flag_select = false, flag_level = false;
 bool state_relay = false;
 
+
+
 void run_tm1637()
 {   
-    String m = String(int(num_programm + 1));
+    String m = String(num_programm + 1);
     int mlength = m.length();
 
     if(mlength != 4)
@@ -67,12 +69,39 @@ void clear_tm1637()
     tm1637.display(3, 0);
 }
 
+void all_reset()
+{
+    for(int i = 0; i < 60; i++) 
+    {
+        digitalWrite(relays[i], HIGH);
+
+        Serial.print("RELAY ");
+        Serial.print(i);
+        Serial.print(" - ");
+        Serial.print(relays[i]);
+        Serial.print(" - ");
+        Serial.println(digitalRead(relays[i]));
+
+        //delay(100);
+    }
+    
+    it_work = false;
+    state_relay = false;
+    num_relay = 0;
+    cnt = 0;
+    run_tm1637();
+
+    Serial.println("ALL RESET");
+}
+
 void setup()
 {
+    Serial.begin(9600);
+    
     pinMode(SELECT, INPUT); digitalWrite(SELECT, HIGH);
     pinMode(LEVEL,  INPUT); digitalWrite(LEVEL, HIGH);
 
-    for(int i = 0; i < 60; ++i)
+    for(int i = 0; i < 60; i++)
     {
         pinMode(relays[i], OUTPUT); digitalWrite(relays[i], HIGH);
     }
@@ -81,16 +110,8 @@ void setup()
     tm1637.init();
     clear_tm1637();
     run_tm1637();
-}
-
-void all_reset()
-{
-    for(int i = 0; i < 60; ++i) digitalWrite(relays[i], LOW);
-    it_work = false;
-    state_relay = false;
-    num_relay = 0;
-    cnt = 0;
-    run_tm1637();
+    
+    Serial.println("SETUP COMPLETE");
 }
 
 void loop()
@@ -99,6 +120,8 @@ void loop()
     {
         flag_level = true;
         delay(100);
+
+        Serial.println("BTN LEVEL DOWN");
     }
 
     if(digitalRead(LEVEL) == HIGH && flag_level == true)
@@ -107,12 +130,16 @@ void loop()
         if(num_programm < 11) num_programm++; else num_programm = 0;
         run_tm1637();
         delay(100);
+
+        Serial.println("BTN LEVEL UP");
     }
 
     if(digitalRead(SELECT) == LOW && flag_select == false)
     {
         flag_select = true;
         delay(100);
+
+        Serial.println("BTN SELECT DOWN");
     }
 
     if(digitalRead(SELECT) == HIGH && flag_select == true)
@@ -120,25 +147,47 @@ void loop()
         flag_select = false;
         if(it_work) all_reset(); else it_work = true;
         delay(100);
+        
+        Serial.println("BTN SELECT UP");
     }
 
+
+
+
     if(it_work)
-    {
-        if(cnt == modes[num_programm] * 60) all_reset();
-        
-        if(num_programm < 7)
+    {        
+        if(num_programm < 6)
         {
             if(!state_relay) 
             {
                 time_period = millis();
                 digitalWrite(relays[num_relay], LOW);
+
+                Serial.print("RELAY ");
+                Serial.print(num_relay);
+                Serial.print(" - ");
+                Serial.print(relays[num_relay]);
+                Serial.print(" - ");
+                Serial.println(digitalRead(relays[num_relay]));
+                
                 state_relay = true;
             }
 
             if(millis() - time_period >= pause_one) 
             {
                 digitalWrite(relays[num_relay], HIGH);
-                if(num_relay < 60) num_relay++; else num_relay = 0;
+                
+                Serial.print("RELAY ");
+                Serial.print(num_relay);
+                Serial.print(" - ");
+                Serial.print(relays[num_relay]);
+                Serial.print(" - ");
+                Serial.println(digitalRead(relays[num_relay]));
+                
+                num_relay++;
+
+                if(num_relay > 59) num_relay = 0;
+                
                 cnt++;
                 state_relay = false;
             }
@@ -149,17 +198,38 @@ void loop()
             {
                 time_period = millis();
                 digitalWrite(relays[num_relay], LOW);
+
+                Serial.print("RELAY ");
+                Serial.print(num_relay);
+                Serial.print(" - ");
+                Serial.print(relays[num_relay]);
+                Serial.print(" - ");
+                Serial.println(digitalRead(relays[num_relay]));
+                
                 state_relay = true;
             }
 
             if(millis() - time_period >= pause_two) 
             {
                 digitalWrite(relays[num_relay], HIGH);
-                if(num_relay < 60) num_relay++; else num_relay = 0;
+                
+                Serial.print("RELAY ");
+                Serial.print(num_relay);
+                Serial.print(" - ");
+                Serial.print(relays[num_relay]);
+                Serial.print(" - ");
+                Serial.println(digitalRead(relays[num_relay]));
+                
+                num_relay++;
+                
+                if(num_relay > 59) num_relay = 0;
+
                 cnt++;
                 state_relay = false;
             }
-        }        
+        } 
+
+        if(cnt == modes[num_programm] * 60) all_reset();
     }
 }
 
