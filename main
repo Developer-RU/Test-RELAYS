@@ -199,7 +199,28 @@ void loop()
                 cnt++;
                 state_relay = false;
                 
-                delay(modes_pause[num_relay] * 1000);
+               while(pause_cnt > 0)
+               {
+                    if(digitalRead(SELECT) == LOW && flag_select == false)
+                    {
+                        flag_select = true;
+                        delay(100);
+
+                        Serial.println("BTN SELECT DOWN");
+                    }
+
+                    if(digitalRead(SELECT) == HIGH && flag_select == true)
+                    {
+                        flag_select = false;
+                        if(it_work) all_reset(); else it_work = true;
+                        delay(100);
+
+                        Serial.println("BTN SELECT UP");
+                    }
+                    
+                    delay(1);
+                    pause_cnt--;
+                }              
             }
         }
         else
@@ -237,7 +258,30 @@ void loop()
                 cnt++;
                 state_relay = false;
                 
-                delay(modes_pause[num_relay] * 1000);
+                int pause_cnt = modes_pause[num_relay] * 1000;
+                
+                while(pause_cnt > 0)
+                {
+                    if(digitalRead(SELECT) == LOW && flag_select == false)
+                    {
+                       flag_select = true;
+                       delay(100);
+
+                       Serial.println("BTN SELECT DOWN");
+                    }
+
+                    if(digitalRead(SELECT) == HIGH && flag_select == true)
+                    {
+                       flag_select = false;
+                       if(it_work) all_reset(); else it_work = true;
+                       delay(100);
+
+                       Serial.println("BTN SELECT UP");
+                    }
+                    
+                    delay(1);
+                    pause_cnt--;
+                }                           
             }
         } 
 
