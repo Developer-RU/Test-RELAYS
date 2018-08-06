@@ -31,6 +31,14 @@ int modes[12] =
     7, 8, 9, 10, 11, 12
 };
 
+// Длительности пауз режимов
+int modes_pause[12] = 
+{
+    1, 2, 3,  4,  5,  6,
+    7, 8, 9, 10, 11, 12
+};
+
+
 unsigned long pause_one = 200;  /// Указано в миллисекундах, возможно надо корректировать на 1-2 мс
 unsigned long pause_two = 250;  /// Указано в миллисекундах, возможно надо корректировать на 1-4 мс
 
@@ -190,6 +198,8 @@ void loop()
                 
                 cnt++;
                 state_relay = false;
+                
+                delay(modes_pause[num_relay] * 1000);
             }
         }
         else
@@ -226,6 +236,8 @@ void loop()
 
                 cnt++;
                 state_relay = false;
+                
+                delay(modes_pause[num_relay] * 1000);
             }
         } 
 
