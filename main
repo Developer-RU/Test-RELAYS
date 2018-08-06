@@ -191,14 +191,8 @@ void loop()
                 Serial.print(relays[num_relay]);
                 Serial.print(" - ");
                 Serial.println(digitalRead(relays[num_relay]));
-                
-                num_relay++;
-
-                if(num_relay > 59) num_relay = 0;
-                
-                cnt++;
-                state_relay = false;
-                int pause_cnt = modes_pause[num_relay] * 1000;
+                               
+                int pause_cnt = modes_pause[num_programm] * 1000;
 
                 while(pause_cnt)
                 {
@@ -221,7 +215,14 @@ void loop()
                     
                     delay(1);
                     pause_cnt--;
-                }              
+                }   
+
+                num_relay++;
+
+                if(num_relay > 59) num_relay = 0;
+                
+                cnt++;
+                state_relay = false;
             }
         }
         else
@@ -251,14 +252,8 @@ void loop()
                 Serial.print(relays[num_relay]);
                 Serial.print(" - ");
                 Serial.println(digitalRead(relays[num_relay]));
-                
-                num_relay++;
-                
-                if(num_relay > 59) num_relay = 0;
 
-                cnt++;
-                state_relay = false;
-                int pause_cnt = modes_pause[num_relay] * 1000;
+                int pause_cnt = modes_pause[num_programm] * 1000;
                 
                 while(pause_cnt)
                 {
@@ -281,11 +276,17 @@ void loop()
                     
                     delay(1);
                     pause_cnt--;
-                }                           
+                }      
+                                
+                num_relay++;
+                
+                if(num_relay > 59) num_relay = 0;
+
+                cnt++;
+                state_relay = false;                     
             }
         } 
 
         if(cnt == modes[num_programm] * 60) all_reset();
     }
 }
-
