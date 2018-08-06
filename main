@@ -200,7 +200,7 @@ void loop()
                 state_relay = false;
                 int pause_cnt = modes_pause[num_relay] * 1000;
 
-                while(pause_cnt > 0)
+                while(pause_cnt)
                 {
                     if(digitalRead(SELECT) == LOW && flag_select == false)
                     {
@@ -260,7 +260,7 @@ void loop()
                 state_relay = false;
                 int pause_cnt = modes_pause[num_relay] * 1000;
                 
-                while(pause_cnt > 0)
+                while(pause_cnt)
                 {
                     if(digitalRead(SELECT) == LOW && flag_select == false)
                     {
