@@ -145,7 +145,7 @@ void loop()
         run_tm1637();
         delay(100);
 
-        Serial.println("BTN LEVEL UP");
+        Serial.print("BTN LEVEL UP --- MODE "); Serial.println(num_programm + 1);
     }
 
     if(digitalRead(SELECT) == LOW && flag_select == false)
@@ -211,32 +211,38 @@ void loop()
                 Serial.print(" - ");
                 Serial.println(digitalRead(relays[num_relay]));
                                
-                pause_cnt = modes_pause[num_programm] * 1000;
+                pause_cnt = modes_pause[num_programm];
                 unsigned long cutime = millis();
-                while(millis() < cutime + pause_cnt)
+                
+                while(pause_cnt)
                 {
-                    if(digitalRead(SELECT) == LOW && flag_select == false)
-                    {
-                       flag_select = true;
-                       delay(100);
-
-                       Serial.println("BTN SELECT DOWN");
-                    }
-
-                    if(digitalRead(SELECT) == HIGH && flag_select == true)
-                    {
-                       pause_cnt = 0;
-                       flag_select = false;
-                       if(it_work) all_reset();
-                       delay(100);
-
-                       Serial.println("BTN SELECT UP");
-                    }
+                    cutime = millis();
                     
-                    delay(1);
-                    //pause_cnt--;
-                }      
+                    while(millis() < cutime + 1000)
+                    {
+                        if(digitalRead(SELECT) == LOW && flag_select == false)
+                        {
+                           flag_select = true;
+                           delay(100);
+    
+                           Serial.println("BTN SELECT DOWN");
+                        }
+    
+                        if(digitalRead(SELECT) == HIGH && flag_select == true)
+                        {
+                           pause_cnt = 1;
+                           flag_select = false;
+                           if(it_work) all_reset();
+                           delay(100);
+    
+                           Serial.println("BTN SELECT UP");
+                        }
+                    }    
 
+                    pause_cnt--;   
+                }
+
+                
                 num_relay++;
 
                 if(num_relay > 59) num_relay = 0;
@@ -273,31 +279,36 @@ void loop()
                 Serial.print(" - ");
                 Serial.println(digitalRead(relays[num_relay]));
 
-                pause_cnt = modes_pause[num_programm] * 1000;
+                 pause_cnt = modes_pause[num_programm];
                 unsigned long cutime = millis();
-                while(millis() < cutime + pause_cnt)
+                
+                while(pause_cnt)
                 {
-                    if(digitalRead(SELECT) == LOW && flag_select == false)
-                    {
-                       flag_select = true;
-                       delay(100);
-
-                       Serial.println("BTN SELECT DOWN");
-                    }
-
-                    if(digitalRead(SELECT) == HIGH && flag_select == true)
-                    {
-                       pause_cnt = 0;
-                       flag_select = false;
-                       if(it_work) all_reset();
-                       delay(100);
-
-                       Serial.println("BTN SELECT UP");
-                    }
+                    cutime = millis();
                     
-                    delay(1);
-                    //pause_cnt--;
-                }      
+                    while(millis() < cutime + 1000)
+                    {
+                        if(digitalRead(SELECT) == LOW && flag_select == false)
+                        {
+                           flag_select = true;
+                           delay(100);
+    
+                           Serial.println("BTN SELECT DOWN");
+                        }
+    
+                        if(digitalRead(SELECT) == HIGH && flag_select == true)
+                        {
+                           pause_cnt = 1;
+                           flag_select = false;
+                           if(it_work) all_reset();
+                           delay(100);
+    
+                           Serial.println("BTN SELECT UP");
+                        }
+                    }    
+
+                    pause_cnt--;   
+                }
                                 
                 num_relay++;
                 
