@@ -212,8 +212,8 @@ void loop()
                 Serial.println(digitalRead(relays[num_relay]));
                                
                 pause_cnt = modes_pause[num_programm] * 1000;
-
-                while(pause_cnt)
+                unsigned long cutime = millis();
+                while(millis() - cutime < pause_cnt)
                 {
                     if(digitalRead(SELECT) == LOW && flag_select == false)
                     {
@@ -225,7 +225,7 @@ void loop()
 
                     if(digitalRead(SELECT) == HIGH && flag_select == true)
                     {
-                       pause_cnt = 1;
+                       pause_cnt = 0;
                        flag_select = false;
                        if(it_work) all_reset();
                        delay(100);
@@ -234,8 +234,8 @@ void loop()
                     }
                     
                     delay(1);
-                    pause_cnt--;
-                }   
+                    //pause_cnt--;
+                }      
 
                 num_relay++;
 
@@ -274,8 +274,8 @@ void loop()
                 Serial.println(digitalRead(relays[num_relay]));
 
                 pause_cnt = modes_pause[num_programm] * 1000;
-                
-                while(pause_cnt)
+                unsigned long cutime = millis();
+                while(millis() - cutime < pause_cnt)
                 {
                     if(digitalRead(SELECT) == LOW && flag_select == false)
                     {
@@ -287,7 +287,7 @@ void loop()
 
                     if(digitalRead(SELECT) == HIGH && flag_select == true)
                     {
-                       pause_cnt = 1;
+                       pause_cnt = 0;
                        flag_select = false;
                        if(it_work) all_reset();
                        delay(100);
@@ -296,7 +296,7 @@ void loop()
                     }
                     
                     delay(1);
-                    pause_cnt--;
+                    //pause_cnt--;
                 }      
                                 
                 num_relay++;
