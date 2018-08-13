@@ -36,7 +36,7 @@ int modes[36] =
 };
 
 // Длительности пауз режимов
-int modes_pause[36] = 
+unsigned long modes_pause[36] = 
 {
     1, 2, 3,  4,  5,  6,
     7, 8, 9, 10, 11, 12,
