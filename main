@@ -15,7 +15,7 @@ int8_t NumTab[36] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,
 
 
 // Пины на реле - секциями по 10шт (можно также написать их названия - A0, A1 и т.п.)
-int relays[60] = 
+long relays[60] = 
 {
     A12,  7,  8,  9, 10, 11, 12, 13,  14,  15, 
      16, 17, 18, 19, 20, 21, 22, 23,  24,  25, 
@@ -28,14 +28,14 @@ int relays[60] =
 //int pin6 = 6;
  
 // Длительности режимов (если время пришло - все реле выключатся, независимо на каком реле встала работа)
-int modes[36] = 
+long modes[36] = 
 {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
 };
 
 // Длительности пауз режимов
-int modes_pause[36] = 
+long modes_pause[36] = 
 {
     10,  20,  30,  40,  50,  60, 70,  80, 90, 100, 110,  120, 130, 140, 150, 170, 180, 
     10,  20,  30,  40,  50,  60, 70,  80, 90, 100, 110,  120, 130, 140, 150, 170, 180
@@ -213,7 +213,7 @@ void loop()
                                
                 pause_cnt = modes_pause[num_programm] * 1000;
                 unsigned long cutime = millis();
-                while(millis() - cutime < pause_cnt)
+                while(millis() < cutime + pause_cnt)
                 {
                     if(digitalRead(SELECT) == LOW && flag_select == false)
                     {
@@ -275,7 +275,7 @@ void loop()
 
                 pause_cnt = modes_pause[num_programm] * 1000;
                 unsigned long cutime = millis();
-                while(millis() - cutime < pause_cnt)
+                while(millis() < cutime + pause_cnt)
                 {
                     if(digitalRead(SELECT) == LOW && flag_select == false)
                     {
