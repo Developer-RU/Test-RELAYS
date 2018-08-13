@@ -145,7 +145,7 @@ void loop()
         run_tm1637();
         delay(100);
 
-        Serial.print("BTN LEVEL UP --- MODE "); Serial.println(num_programm + 1);
+        Serial.print("BTN LEVEL UP --- MODE "); Serial.print(num_programm + 1); Serial.print(" "); Serial.println(modes_pause[num_programm]);
     }
 
     if(digitalRead(SELECT) == LOW && flag_select == false)
